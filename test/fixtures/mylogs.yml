@@ -1,0 +1,13 @@
+# Read about fixtures at http://ar.rubyonrails.org/classes/Fixtures.html
+
+one:
+  error_code: 1
+  page: 1
+  since_date: MyString
+  until_date: MyString
+
+two:
+  error_code: 1
+  page: 1
+  since_date: MyString
+  until_date: MyString

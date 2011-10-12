@@ -1,0 +1,17 @@
+# Read about fixtures at http://ar.rubyonrails.org/classes/Fixtures.html
+
+one:
+  user_id: 1
+  screen_name: MyString
+  text: MyString
+  tweet_id: 1
+  timestamp: 2011-08-10
+  to_user_id: 1
+
+two:
+  user_id: 1
+  screen_name: MyString
+  text: MyString
+  tweet_id: 1
+  timestamp: 2011-08-10
+  to_user_id: 1

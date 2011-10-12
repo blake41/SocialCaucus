@@ -1,0 +1,17 @@
+<%= 'Hi Guys!' %><br>
+<%= "#{@stats.number_of_tweets} Tweets" %><br>
+<%= "#{@stats.number_of_activists} Activists"%><br>
+<%= "#{@stats.number_of_politicians_tracked} Politicians Tracked"%><br>
+<%= "#{@stats.number_of_keywords_tracked} Keywords Tracked"%><br>
+<%= "#{@stats.number_of_politicians_followers} Politicians Followers"%><br>
+<%= "#{@stats.number_of_activists_friends} Activists Friends"%><br>
+<%= "#{@stats.average_number_of_tweets_per_day} - Average Number of Tweets per Day"%><br>
+<%= "#{@stats.average_number_of_tweets_per_keyword} - Average Number of Tweets per Keyword"%><br>
+<%= "#{@stats.average_number_of_tweets_per_politician} - Average Number of Tweets per Politician"%><br>
+<%= "#{@stats.number_of_activists_profiles} Activists Profiles"%><br>
+<% @queue.each do |k,v| %>
+<%= puts "#{k} - #{v}" %><br>
+<% end %>
+
+
+

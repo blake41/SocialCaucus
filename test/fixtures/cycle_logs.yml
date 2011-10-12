@@ -1,0 +1,17 @@
+# Read about fixtures at http://ar.rubyonrails.org/classes/Fixtures.html
+
+one:
+  process: MyString
+  time: MyString
+  records_received: 1
+  records_stored: 1
+  page: 1
+  count: 1
+
+two:
+  process: MyString
+  time: MyString
+  records_received: 1
+  records_stored: 1
+  page: 1
+  count: 1

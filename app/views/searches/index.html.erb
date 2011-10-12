@@ -1,0 +1,18 @@
+<%= form_tag(:action => 'create', :method => 'post')%>
+
+<%= label_tag('Enter Twitter User Name') %><br>
+<%= text_field_tag(:user_name) %><br>
+
+<%= label_tag('Enter Location') %><br>
+<%= text_field_tag(:location) %><br>
+
+<%= label_tag('Enter Description') %><br>
+<%= text_field_tag(:description) %><br>
+
+<%= label_tag('Tweets on or After') %><br>
+<%= select_date Date.today, :prefix => :start_date %><br>
+
+<%= label_tag('Tweets on or Before') %><br>
+<%= select_date Date.today, :prefix => :end_date %><br>
+
+<%= submit_tag('Submit')%><br>

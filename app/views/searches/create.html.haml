@@ -1,0 +1,10 @@
+%table
+  %thead
+    %tr
+      - @results.first.attribute_names.each do |c|
+        %th #{c}
+  %tbody
+    - @results.each do |record|
+      %tr
+        - @results.first.attribute_names.each do |c|
+          %td #{record.send(c)}
