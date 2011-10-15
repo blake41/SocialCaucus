@@ -9,7 +9,7 @@ class Changecolumnstweets < ActiveRecord::Migration
 
   def self.down
     add_column :tweets, :retweet_count, :integer
-    add_coumn :tweets, :in_reply_to, :string
+    add_column :tweets, :in_reply_to, :string
     remove_column :tweets, :user_id
     remove_column :tweets, :to_user_id
     remove_column :tweets, :timestamp

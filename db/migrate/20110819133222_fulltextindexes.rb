@@ -8,10 +8,10 @@ class Fulltextindexes < ActiveRecord::Migration
   end
 
   def self.down
-    execute('ALTER TABLE sms ENGINE = innodb')
-    execute('ALTER TABLE customers ENGINE = innodb')
     execute('DROP INDEX fulltext_text ON politicians_tweets_abouts')
     execute('DROP INDEX fulltext_description ON activists')
     execute('DROP INDEX fulltext_location ON activists')
+    execute('ALTER TABLE politicians_tweets_abouts ENGINE = innodb')
+    execute('ALTER TABLE activists ENGINE = innodb')
   end
 end

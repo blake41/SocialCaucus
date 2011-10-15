@@ -22,3 +22,14 @@ gem 'haml'
 gem 'ruby-prof'
 gem 'metrical'
 gem 'crewait', :git => 'https://github.com/blake41/crewait'
+gem 'looksee'
+
+
+group :test, :development do
+  gem 'mocha'
+  gem 'rspec-rails'
+  gem 'rspec'
+  gem 'factory_girl'
+  gem 'autotest'
+  gem 'fakeweb'
+end

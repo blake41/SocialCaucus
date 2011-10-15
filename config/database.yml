@@ -4,8 +4,7 @@ development:
   adapter: mysql2
   encoding: utf8
   database: devel_gillibrand
-  username: blake
-  password: mysqlp@ss123
+  username: root
   socket: <%=
 	        ['/tmp/mysql.sock', # os x
 	         '/var/run/mysqld/mysqld.sock']           # ubuntu/debian
@@ -30,5 +29,11 @@ test:
     password:
     socket: /tmp/mysql.sock
 
-
+production:
+    adapter: mysql2
+    encoding: utf8
+    database: prod_gillibrand
+    username: root
+    password:
+    socket: /tmp/mysql.sock
 

@@ -12,15 +12,6 @@
 
 ActiveRecord::Schema.define(:version => 20110827200441) do
 
-  create_table "activist_friends", :force => true do |t|
-    t.integer  "user_id"
-    t.integer  "friend_id"
-    t.datetime "created_at"
-    t.datetime "updated_at"
-  end
-
-  add_index "activist_friends", ["user_id"], :name => "index_relationships_on_follower_id"
-
   create_table "activists", :force => true do |t|
     t.integer  "user_id"
     t.string   "screen_name"
@@ -35,7 +26,7 @@ ActiveRecord::Schema.define(:version => 20110827200441) do
 
   add_index "activists", ["description"], :name => "fulltext_description"
   add_index "activists", ["location"], :name => "fulltext_location"
-  add_index "activists", ["screen_name"], :name => "screen_name", :unique => true
+  add_index "activists", ["screen_name"], :name => "index_activists_on_screen_name"
   add_index "activists", ["user_id"], :name => "index_activists_on_user_id"
 
   create_table "api_benchmarks", :force => true do |t|
@@ -61,6 +52,21 @@ ActiveRecord::Schema.define(:version => 20110827200441) do
     t.datetime "updated_at"
   end
 
+  create_table "delayed_jobs", :force => true do |t|
+    t.integer  "priority",   :default => 0
+    t.integer  "attempts",   :default => 0
+    t.text     "handler"
+    t.text     "last_error"
+    t.datetime "run_at"
+    t.datetime "locked_at"
+    t.datetime "failed_at"
+    t.string   "locked_by"
+    t.datetime "created_at"
+    t.datetime "updated_at"
+  end
+
+  add_index "delayed_jobs", ["priority", "run_at"], :name => "delayed_jobs_priority"
+
   create_table "millions", :force => true do |t|
     t.integer  "user_id"
     t.string   "screen_name"
@@ -83,11 +89,10 @@ ActiveRecord::Schema.define(:version => 20110827200441) do
   end
 
   create_table "politicians", :force => true do |t|
-    t.integer  "user_id"
     t.string   "screen_name"
-    t.string   "Full_Name"
-    t.string   "Party"
-    t.string   "State"
+    t.integer  "user_id"
+    t.string   "full_name"
+    t.string   "party"
     t.datetime "created_at"
     t.datetime "updated_at"
     t.integer  "base_run_done"
@@ -119,17 +124,17 @@ ActiveRecord::Schema.define(:version => 20110827200441) do
     t.string   "screen_name"
     t.string   "text"
     t.integer  "tweet_id",    :limit => 8
+    t.string   "keyword"
     t.datetime "created_at"
     t.datetime "updated_at"
     t.integer  "user_id"
     t.integer  "to_user_id"
     t.date     "timestamp"
-    t.string   "keyword"
   end
 
   add_index "politicians_tweets_abouts", ["keyword"], :name => "index_politicians_tweets_abouts_on_keyword"
   add_index "politicians_tweets_abouts", ["screen_name"], :name => "index_tweets_on_screen_name"
-  add_index "politicians_tweets_abouts", ["tweet_id"], :name => "tweet_id", :unique => true
+  add_index "politicians_tweets_abouts", ["text"], :name => "fulltext_text"
   add_index "politicians_tweets_abouts", ["user_id"], :name => "index_tweets_on_user_id"
 
   create_table "searches", :force => true do |t|
