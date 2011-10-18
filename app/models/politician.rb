@@ -2,25 +2,25 @@ class Politician < ActiveRecord::Base
   
   URL = "twitter-blake41.apigee.com/1/users/lookup.json"
   
-  def self.usernameidmatch
-    Politician.find_in_batches(:batch_size => 100) do |array|
-      users = Helpers.prepare_user_array(array)
-      responseobj = Request.get(URL,{:user_id => users})
+  def self.get_user_id_from_screen_name
+    self.find_in_batches(:batch_size => 100) do |array|
+      screen_names = array.collect(&:screen_name).join(",")
+      responseobj = Request.get(URL,{:screen_name => screen_names})
       response = JSON.parse(responseobj.body)
       response.each do |user|
-        Politician.save_user(user)
+        self.save_user(user)
       end
     end
   end
   
   def self.save_user(user)
-    row = Politician.where(:user_id => user['id'])
-    row[0].update_attributes(:screen_name => user['screen_name'])
+    row = Politician.where(:screen_name => user['screen_name'])
+    row[0].update_attributes(:user_id => user['id'])
   end
   
   def self.get_tweets_by_politicians
     counter = 0
-    Politician.all.each do |politician|
+    self.all.each do |politician|
       Resque.enqueue(GetPoliticiansTweets, politician.id)
       counter += 1
     end
@@ -29,10 +29,11 @@ class Politician < ActiveRecord::Base
   
   def self.get_politicians_friends
     counter = 0
-    Politician.all.each do |politician|
+    self.all.each do |politician|
       Resque.enqueue(GetPoliticiansFriends, politician.id)
       counter += 1
     end
     puts "#{counter} Jobs Queued Up"
   end
+  
 end

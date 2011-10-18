@@ -1,6 +1,6 @@
 class Stat < ActiveRecord::Base
   
-  @recipients = ['blake41@gmail.com',git 'suraj.patel1@gmail.com', 'ajishg@gmail.com']
+  @recipients = ['blake41@gmail.com', 'suraj.patel1@gmail.com', 'ajishg@gmail.com']
   
   def self.create_stats
     Stat.create(:number_of_tweets => Stat.number_of_tweets, 
