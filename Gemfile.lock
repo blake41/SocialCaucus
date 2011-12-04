@@ -1,6 +1,6 @@
 GIT
   remote: https://github.com/blake41/crewait
-  revision: 066b713f7b7753ca0b14dbe258cb9822fc94d908
+  revision: 5eb52288fb4bc790c2316cc50bd3bd750bba2186
   specs:
     crewait (0.1.6)
 
@@ -40,9 +40,10 @@ GEM
     addressable (2.2.6)
     archive-tar-minitar (0.5.2)
     arel (2.0.10)
+    arrayfields (4.7.4)
     autotest (4.4.6)
       ZenTest (>= 4.4.1)
-    awesome_print (0.4.0)
+    awesome_print (1.0.1)
     builder (2.1.2)
     cheat (1.3.0)
     chronic (0.3.0)
@@ -54,35 +55,49 @@ GEM
       ruby_parser (~> 2.0.4)
       sexp_processor (~> 3.0.3)
     colored (1.2)
-    columnize (0.3.4)
+    colorize (0.5.8)
+    columnize (0.3.5)
+    crack (0.3.1)
     daemons (1.1.4)
     diff-lcs (1.1.3)
-    em-http-request (0.3.0)
-      addressable (>= 2.0.0)
-      escape_utils
-      eventmachine (>= 0.12.9)
+    em-http-request (1.0.0)
+      addressable (>= 2.2.3)
+      em-socksify
+      eventmachine (>= 1.0.0.beta.3)
+      http_parser.rb (>= 0.5.2)
+    em-socksify (0.1.0)
+      eventmachine
     erubis (2.6.6)
       abstract (>= 1.0.0)
-    escape_utils (0.2.3)
-    eventmachine (0.12.10)
-    factory_girl (2.1.2)
+    eventmachine (1.0.0.beta.4)
+    factory_girl (2.3.2)
       activesupport
-    factory_girl_rails (1.2.0)
-      factory_girl (~> 2.1.0)
+    factory_girl_rails (1.4.0)
+      factory_girl (~> 2.3.0)
       railties (>= 3.0.0)
     fakeweb (1.3.0)
+    fattr (2.2.0)
     flay (1.4.3)
       ruby_parser (~> 2.0)
       sexp_processor (~> 3.0)
-    flog (2.5.2)
+    flog (2.5.3)
       ruby_parser (~> 2.0)
       sexp_processor (~> 3.0)
-    haml (3.1.2)
-    hashie (1.0.0)
-    hirb (0.4.5)
+    guard (0.8.8)
+      thor (~> 0.14.6)
+    guard-rspec (0.5.8)
+      guard (>= 0.8.4)
+    haml (3.1.4)
+    hash_dealer (1.4.6)
+      activesupport
+      colorize
+      i18n
+    hashie (1.2.0)
+    hirb (0.6.0)
+    http_parser.rb (0.5.3)
     i18n (0.5.0)
-    json (1.5.3)
-    json_pure (1.5.3)
+    json (1.6.3)
+    json_pure (1.6.3)
     linecache19 (0.5.12)
       ruby_core_source (>= 0.1.4)
     looksee (1.0.3)
@@ -91,7 +106,11 @@ GEM
       i18n (>= 0.4.0)
       mime-types (~> 1.16)
       treetop (~> 1.4.8)
-    main (4.7.1)
+    main (4.6.0)
+      arrayfields (>= 4.7.4)
+      fattr (>= 2.1.0)
+      map (>= 2.0.0)
+    map (4.7.1)
     map_by_method (0.8.3)
     metaclass (0.0.1)
     metric_fu (2.1.1)
@@ -106,15 +125,18 @@ GEM
       reek (>= 1.2.6)
       roodi (>= 2.1.0)
       syntax
-    metrical (0.0.5)
-      activesupport
+    metrical (0.0.7)
+      main (~> 4.6.0)
       metric_fu (~> 2.1.1)
-    mime-types (1.16)
+      rake
+    mime-types (1.17.2)
     mocha (0.10.0)
       metaclass (~> 0.0.1)
+    multi_json (1.0.4)
     mysql2 (0.2.6)
-    polyglot (0.3.1)
-    rack (1.2.3)
+    polyglot (0.3.3)
+    progressbar (0.9.2)
+    rack (1.2.4)
     rack-mount (0.6.14)
       rack (>= 1.0.0)
     rack-test (0.5.7)
@@ -127,23 +149,23 @@ GEM
       activesupport (= 3.0.9)
       bundler (~> 1.0)
       railties (= 3.0.9)
-    rails_best_practices (0.10.1)
+    rails_best_practices (1.5.3)
       activesupport
       colored
       erubis
-      haml
       i18n
-      ruby-progressbar
-      ruby_parser
+      progressbar
+      sexp_processor
     railties (3.0.9)
       actionpack (= 3.0.9)
       activesupport (= 3.0.9)
       rake (>= 0.8.7)
       rdoc (~> 3.4)
       thor (~> 0.14.4)
-    rake (0.9.2)
-    rcov (0.9.10)
-    rdoc (3.8)
+    rake (0.9.2.2)
+    rcov (0.9.11)
+    rdoc (3.11)
+      json (~> 1.4)
     redis (2.2.2)
     redis-namespace (1.0.3)
       redis (< 3.0.0)
@@ -151,26 +173,26 @@ GEM
       ruby2ruby (~> 1.2)
       ruby_parser (~> 2.0)
       sexp_processor (~> 3.0)
-    resque (1.17.1)
-      json (>= 1.4.6, < 1.6)
+    resque (1.19.0)
+      multi_json (~> 1.0)
       redis-namespace (~> 1.0.2)
       sinatra (>= 0.9.2)
       vegas (~> 0.1.2)
     roodi (2.1.0)
       ruby_parser
-    rspec (2.6.0)
-      rspec-core (~> 2.6.0)
-      rspec-expectations (~> 2.6.0)
-      rspec-mocks (~> 2.6.0)
-    rspec-core (2.6.4)
-    rspec-expectations (2.6.0)
+    rspec (2.7.0)
+      rspec-core (~> 2.7.0)
+      rspec-expectations (~> 2.7.0)
+      rspec-mocks (~> 2.7.0)
+    rspec-core (2.7.1)
+    rspec-expectations (2.7.0)
       diff-lcs (~> 1.1.2)
-    rspec-mocks (2.6.0)
-    rspec-rails (2.6.1)
+    rspec-mocks (2.7.0)
+    rspec-rails (2.7.0)
       actionpack (~> 3.0)
       activesupport (~> 3.0)
       railties (~> 3.0)
-      rspec (~> 2.6.0)
+      rspec (~> 2.7.0)
     ruby-debug-base19 (0.11.25)
       columnize (>= 0.3.1)
       linecache19 (>= 0.5.11)
@@ -180,40 +202,43 @@ GEM
       linecache19 (>= 0.5.11)
       ruby-debug-base19 (>= 0.11.19)
     ruby-prof (0.10.8)
-    ruby-progressbar (0.0.10)
-    ruby2ruby (1.2.5)
+    ruby2ruby (1.3.1)
       ruby_parser (~> 2.0)
       sexp_processor (~> 3.0)
     ruby_core_source (0.1.5)
       archive-tar-minitar (>= 0.5.2)
     ruby_parser (2.0.6)
       sexp_processor (~> 3.0)
-    sexp_processor (3.0.6)
-    sinatra (1.2.6)
+    sexp_processor (3.0.8)
+    sinatra (1.2.7)
       rack (~> 1.1)
-      tilt (>= 1.2.2, < 2.0)
+      tilt (< 2.0, >= 1.2.2)
     syntax (1.0.0)
-    thin (1.2.11)
+    thin (1.3.1)
       daemons (>= 1.0.9)
       eventmachine (>= 0.12.6)
       rack (>= 1.0.0)
     thor (0.14.6)
-    tilt (1.3.2)
-    treetop (1.4.9)
+    tilt (1.3.3)
+    treetop (1.4.10)
+      polyglot
       polyglot (>= 0.3.1)
-    typhoeus (0.2.4)
+    typhoeus (0.3.3)
       mime-types
-      mime-types
-    tzinfo (0.3.29)
+    tzinfo (0.3.31)
     vcr (1.11.3)
     vegas (0.1.8)
       rack (>= 1.0.0)
+    webmock (1.7.8)
+      addressable (~> 2.2, > 2.2.5)
+      crack (>= 0.1.7)
     what_methods (1.0.1)
     whenever (0.6.8)
       aaronh-chronic (>= 0.3.9)
       activesupport (>= 2.3.4)
-    will_paginate (2.3.15)
+    will_paginate (3.0.2)
     wirble (0.1.3)
+    yajl-ruby (1.1.0)
 
 PLATFORMS
   ruby
@@ -222,12 +247,15 @@ DEPENDENCIES
   autotest
   awesome_print
   cheat
+  colorize
   crewait!
   em-http-request
   eventmachine
   factory_girl_rails
   fakeweb
+  guard-rspec
   haml
+  hash_dealer
   hashie
   hirb
   looksee
@@ -244,7 +272,9 @@ DEPENDENCIES
   thin
   typhoeus
   vcr
+  webmock
   what_methods
   whenever
   will_paginate
   wirble
+  yajl-ruby

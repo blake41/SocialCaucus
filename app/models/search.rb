@@ -1,7 +1,6 @@
 class Search < ActiveRecord::Base
  
   def self.query(args)
-    debugger
     scope = PoliticiansTweetsAbout.scoped
     scope = scope & select('*')
     scope = scope & where("text like ?", "%"+args[:user_name]+"%") unless args[:user_name].blank?

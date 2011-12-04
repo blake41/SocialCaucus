@@ -52,7 +52,7 @@ class Stat < ActiveRecord::Base
   end
   
   def self.average_number_of_tweets_per_day
-    first_day = PoliticiansTweetsAbout.find_by_sql('select * from politicians_tweets_abouts order by timestamp asc limit 1')[0].timestamp
+    first_day = PoliticiansTweetsAbout.find_by_sql('select * from politicians_tweets_abouts order by timestamp asc limit 1').first.timestamp
     last_day = Date.today
     number_of_days = (last_day - first_day).to_i
     average_tweets_per_day = PoliticiansTweetsAbout.count.to_f/number_of_days.to_f

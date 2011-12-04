@@ -15,7 +15,7 @@ class Politician < ActiveRecord::Base
   
   def self.save_user(user)
     row = Politician.where(:screen_name => user['screen_name'])
-    row[0].update_attributes(:user_id => user['id'])
+    row.first.update_attributes(:user_id => user['id'])
   end
   
   def self.get_tweets_by_politicians

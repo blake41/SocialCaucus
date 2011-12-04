@@ -1,25 +1,42 @@
-# debugger
 require 'spec_helper'
 
 describe Politician do
   
   before(:each) do
     Politician.delete_all
+    Resque.remove_queue(:Politicians_tweets)
+    Resque.remove_queue(:Get_politicians_friends)
   end
   
   it "should get and save the username of the politician" do
-  FakeWeb.allow_net_connect = false
-  FakeWeb.register_uri(:get, "HTTP://twitter-blake41.apigee.com/1/users/lookup.json?screen_name=MicheleBachmann%2CDrRandPaul", 
-                       :body => "[{\"is_translator\":false,\"default_profile\":false,\"profile_background_image_url_https\":\"https:\\/\\/si0.twimg.com\\/profile_background_images\\/3638228\\/twitbacks_background.JPG\",\"protected\":false,\"id_str\":\"18217624\",\"follow_request_sent\":false,\"created_at\":\"Thu Dec 18 16:10:29 +0000 2008\",\"friends_count\":17771,\"profile_background_color\":\"61438e\",\"name\":\"MicheleBachmann\",\"following\":false,\"profile_background_tile\":false,\"profile_image_url\":\"http:\\/\\/a1.twimg.com\\/profile_images\\/1132374049\\/Rep_Michele_Bachmann_Official_Photo_WEB_normal.JPG\",\"show_all_inline_media\":false,\"contributors_enabled\":false,\"verified\":true,\"notifications\":false,\"utc_offset\":-21600,\"profile_sidebar_fill_color\":\"f4d506\",\"profile_image_url_https\":\"https:\\/\\/si0.twimg.com\\/profile_images\\/1132374049\\/Rep_Michele_Bachmann_Official_Photo_WEB_normal.JPG\",\"description\":\"Happy to be serving MN-06 for a 3rd term.\",\"listed_count\":4927,\"time_zone\":\"Central Time (US & Canada)\",\"profile_sidebar_border_color\":\"61438E\",\"screen_name\":\"MicheleBachmann\",\"status\":{\"in_reply_to_status_id_str\":null,\"id_str\":\"124555485646032896\",\"truncated\":false,\"created_at\":\"Thu Oct 13 18:41:56 +0000 2011\",\"in_reply_to_user_id_str\":null,\"contributors\":null,\"possibly_sensitive\":false,\"favorited\":false,\"retweet_count\":51,\"in_reply_to_screen_name\":null,\"source\":\"web\",\"place\":null,\"geo\":null,\"id\":124555485646032896,\"coordinates\":null,\"retweeted\":false,\"in_reply_to_user_id\":null,\"in_reply_to_status_id\":null,\"text\":\"Proud to sponsor #prolife legislation giving women the right to make an informed choice of life for their unborn baby. http:\\/\\/t.co\\/Aaz4gQCC\"},\"followers_count\":104503,\"location\":\"Washington, D.C.\",\"geo_enabled\":false,\"profile_use_background_image\":false,\"lang\":\"en\",\"profile_text_color\":\"180c0c\",\"url\":\"http:\\/\\/bachmann.house.gov\\/\",\"default_profile_image\":false,\"statuses_count\":809,\"profile_background_image_url\":\"http:\\/\\/a2.twimg.com\\/profile_background_images\\/3638228\\/twitbacks_background.JPG\",\"favourites_count\":2,\"id\":18217624,\"profile_link_color\":\"0f0505\"},{\"is_translator\":false,\"profile_background_image_url_https\":\"https:\\/\\/si0.twimg.com\\/profile_background_images\\/148413827\\/randtwitternew.jpg\",\"protected\":false,\"id_str\":\"39834947\",\"follow_request_sent\":null,\"created_at\":\"Wed May 13 21:07:01 +0000 2009\",\"friends_count\":254,\"profile_background_color\":\"ffffff\",\"name\":\"Dr. Rand Paul\",\"following\":null,\"profile_background_tile\":false,\"profile_image_url\":\"http:\\/\\/a3.twimg.com\\/profile_images\\/1157451167\\/randpaulbuttonv3_normal.jpg\",\"show_all_inline_media\":false,\"contributors_enabled\":false,\"verified\":false,\"notifications\":null,\"utc_offset\":-18000,\"profile_sidebar_fill_color\":\"bad7ff\",\"profile_image_url_https\":\"https:\\/\\/si0.twimg.com\\/profile_images\\/1157451167\\/randpaulbuttonv3_normal.jpg\",\"description\":\"Dr. Paul has been married to his loving wife, Kelley, for 19 years and has three boys. Rand Paul is a career doctor, not a politician.\",\"listed_count\":1259,\"time_zone\":\"Eastern Time (US & Canada)\",\"profile_sidebar_border_color\":\"181A1E\",\"screen_name\":\"DrRandPaul\",\"status\":{\"in_reply_to_status_id_str\":null,\"id_str\":\"73797073148973056\",\"truncated\":false,\"created_at\":\"Thu May 26 17:06:07 +0000 2011\",\"in_reply_to_user_id_str\":null,\"contributors\":null,\"possibly_sensitive\":false,\"favorited\":false,\"retweet_count\":27,\"in_reply_to_screen_name\":null,\"source\":\"\\u003Ca href=\\\"http:\\/\\/www.mailchimp.com\\\" rel=\\\"nofollow\\\"\\u003EMailChimp\\u003C\\/a\\u003E\",\"place\":null,\"geo\":null,\"id\":73797073148973056,\"coordinates\":null,\"retweeted\":false,\"in_reply_to_user_id\":null,\"in_reply_to_status_id\":null,\"text\":\"GOP Leadership holding up Rand Paul's gun protection amendment? - http:\\/\\/eepurl.com\\/d1jof\"},\"followers_count\":14901,\"location\":\"Bowling Green, KY\",\"geo_enabled\":false,\"profile_use_background_image\":true,\"lang\":\"en\",\"profile_text_color\":\"000000\",\"url\":\"http:\\/\\/www.randpaul2010.com\",\"default_profile_image\":false,\"default_profile\":false,\"statuses_count\":1037,\"profile_background_image_url\":\"http:\\/\\/a1.twimg.com\\/profile_background_images\\/148413827\\/randtwitternew.jpg\",\"favourites_count\":1,\"id\":39834947,\"profile_link_color\":\"b5171a\"}]")
-  
-  pol = Factory.create(:politician)
-  pol2 = Factory.create(:politician, :screen_name => 'DrRandPaul')
-  pol.user_id.should == nil
-  Politician.get_user_id_from_screen_name
-  pol.reload.user_id.should == 18217624
-  pol2.reload.user_id.should == 39834947
-  
+    VCR.use_cassette "lookup" do
+      pol = Factory.create(:politician, :user_id => 1234)
+      pol2 = Factory.create(:politician, :screen_name => 'DrRandPaul', :user_id => 456)
+      Politician.get_user_id_from_screen_name
+      pol.reload.user_id.should == 18217624
+      pol2.reload.user_id.should == 39834947
+    end
   end
+  
+  it "should add a bunch of politicians to the resque queue" do
+    Factory.create(:politician)
+    Politician.get_tweets_by_politicians
+    Resque.size(:Politicians_tweets).should == 1
+  end
+  
+  it "should find a politician by their screen_name and update their user_id" do
+    politician = Factory.create(:politician, :user_id => 1234)
+    user = {'screen_name' => 'MicheleBachmann', 'id' => 18217624}
+    Politician.save_user(user)
+    politician.reload.user_id.should == 18217624
+  end
+  
+  it "should add a bunch of politicians to the resque queue" do
+    Factory.create(:politician)
+    Politician.get_politicians_friends
+    Resque.size(:Get_politicians_friends).should == 1
+  end
+  
 
 end
   

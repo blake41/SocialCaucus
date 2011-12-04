@@ -5,7 +5,6 @@ class GetPoliticiansFriends
   URL = "twitter-blake41.apigee.com/1/friends/ids.json"
   
   def self.perform(user_id)
-    debugger
     @user = Politician.find(user_id)
     responseobj = Request.get(URL, {:screen_name => @user.screen_name })
     if Request.error_check(responseobj, 0, @user)

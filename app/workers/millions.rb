@@ -8,7 +8,7 @@
 #     @user = Activist.where(:user_id => user_id)[0]
 #     responseobj = Request.get(URL, {:screen_name => @user.screen_name })
 #     puts "#{responseobj.headers_hash['X-Ratelimit-Remaining']} calls left this hour"
-#     debugger
+#     
 #     if Request.error_check(responseobj)
 #       puts "Error Code #{responseobj.code}"
 #       Resque.enqueue(GetFriends, @user.screen_name)

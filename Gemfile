@@ -24,12 +24,17 @@ gem 'metrical'
 gem 'crewait', :git => 'https://github.com/blake41/crewait'
 gem 'looksee'
 gem 'rspec-rails'
+gem 'yajl-ruby', :require => 'yajl'
 
-group :test, :development do
+group :test do
   gem 'mocha'
   gem 'rspec-rails'
   gem 'factory_girl_rails'
   gem 'autotest'
   gem 'fakeweb'
   gem 'vcr'
+  gem 'guard-rspec'
+  gem 'webmock'
+  gem 'hash_dealer'
+  gem 'colorize'
 end
