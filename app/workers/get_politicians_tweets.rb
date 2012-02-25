@@ -8,23 +8,23 @@ class GetPoliticiansTweets
     @user = Politician.find(user_id)
     @screen_name = @user.screen_name
     start_page.upto(10000) do |page|
-      if GetPoliticiansTweets.base_run_done?
+      if self.base_run_done?
         tweets = TweetsByPolitician.where(:screen_name => @screen_name).order("tweet_id DESC")
-        responseobj= GetPoliticiansTweets.get_newest_tweets(page, tweets)   
+        responseobj= self.get_newest_tweets(page, tweets)   
       else
-        responseobj = GetPoliticiansTweets.get_first_tweets(page)                                 
+        responseobj = self.get_first_tweets(page)                                 
       end
       if Request.error_check(responseobj, page, @screen_name)
         puts "Error Code #{responseobj.code} on page #{page}"
-        Resque.enqueue(GetPoliticiansTweets, user_id, page)
+        Resque.enqueue(self, user_id, page)
         break
       else
         response = JSON.parse(responseobj.body)
         if response.count ==0
-          GetPoliticiansTweets.empty_results
+          self.empty_results
           break
         else
-        GetPoliticiansTweets.save_results(response)
+        self.save_results(response)
         end
       end
     end

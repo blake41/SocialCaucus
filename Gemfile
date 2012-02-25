@@ -2,31 +2,18 @@ source 'http://rubygems.org'
 
 gem 'rails', '3.0.9'
 gem 'typhoeus'
-gem 'hashie'
-gem 'rake'
-gem 'ruby-debug19'
-gem 'cheat'
 gem 'mysql2', '0.2.6'
-gem 'wirble'
-gem 'hirb'
 gem 'thin'
-gem 'awesome_print'
-gem 'what_methods'
-gem 'map_by_method'
 gem 'will_paginate'
 gem 'resque'
 gem 'whenever'
 gem 'eventmachine'
 gem 'em-http-request'
 gem 'haml'
-gem 'ruby-prof'
-gem 'metrical'
-gem 'crewait', :git => 'https://github.com/blake41/crewait'
-gem 'looksee'
-gem 'rspec-rails'
+gem 'crewait'#, :git => 'https://github.com/blake41/crewait'
 gem 'yajl-ruby', :require => 'yajl'
 
-group :test do
+# group :test do
   gem 'mocha'
   gem 'rspec-rails'
   gem 'factory_girl_rails'
@@ -37,4 +24,14 @@ group :test do
   gem 'webmock'
   gem 'hash_dealer'
   gem 'colorize'
-end
+# end
+
+# group :development do
+  gem 'wirble'
+  gem 'hirb'
+  gem 'awesome_print'
+  gem 'what_methods'
+  gem 'map_by_method'
+  gem 'ruby-debug19'
+# end
+
