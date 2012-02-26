@@ -36,10 +36,10 @@ class GetFriends
   end
   
   def self.save_results
-    response = JSON.parse(@responseobj.body)
+    response = JSON.parse(@responseobj.body)['ids']
     Crewait.start_waiting
       response.each do |friend|
-
+        # this should probably be just the id of the activist so we can do a has many friends
         ActivistFriend.crewait(:user_id => @user_id, 
                               :friend_id => friend)
       end

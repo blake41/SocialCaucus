@@ -7,16 +7,21 @@ class GetPoliticiansFriends
   def self.perform(user_id)
     @user = Politician.find(user_id)
     responseobj = Request.get(URL, {:screen_name => @user.screen_name })
-    if Request.error_check(responseobj, 0, @user)
+    if error = Request.error_check(responseobj, 0, @user)
+      debugger
+      puts 
       Resque.enqueue(GetFriends, user_id)
     else
+      puts 'Saving'
       GetPoliticiansFriends.save_results(responseobj) 
+      puts "Saved #{@user.screen_name}'s friends"
     end
   end
   
   def self.save_results(responseobj)
-    response = JSON.parse(responseobj.body)
+    response = JSON.parse(responseobj.body)['ids']
     response.each do |friend|
+      # this should be user_id so that that politician has many friends
       PoliticiansFriend.create(:user_id => @user.user_id, 
                             :friend_id => friend)
     end

@@ -1,11 +1,11 @@
-require 'vcr'
-
-VCR.config do |c|
-  c.cassette_library_dir = Rails.root.join("spec","vcr")
-  c.stub_with :typhoeus
-  c.default_cassette_options = { :record => :once }
-  c.allow_http_connections_when_no_cassette = true
-end
+# require 'vcr'
+# 
+# VCR.config do |c|
+#   c.cassette_library_dir = Rails.root.join("spec","vcr")
+#   c.stub_with :typhoeus
+#   c.default_cassette_options = { :record => :once }
+#   c.allow_http_connections_when_no_cassette = true
+# end
 
 # RSpec.configure do |c|
 #   c.treat_symbols_as_metadata_keys_with_true_values = true

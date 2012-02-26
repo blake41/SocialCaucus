@@ -11,12 +11,16 @@ class PoliticiansTweetsAbout < ActiveRecord::Base
   end
   
   def self.correct_search_id
+    # twitter search api user_ids are different than the REST api
+    # don't think this works anymore think i got rid of some columns
     PoliticiansTweetsAbout.all.each do |tweet|
       PoliticiansTweetsAbout.store(tweet)
     end
   end
   
   def self.get_real_user_id
+    # clean up user_ids
+    # don't this this really works anymore either
     PoliticiansTweetsAbout.where("user_id is null").find_in_batches(:batch_size => 100) do |array|
       Resque.enqueue(TweetCorrect, array)
     end

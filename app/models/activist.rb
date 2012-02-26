@@ -1,5 +1,5 @@
 class Activist < ActiveRecord::Base
-  scope :null, where(:user_id=>nil)
+  scope :null, where(:user_id => nil)
   scope :not_null, where('user_id is not null')
   scope :anon, lambda {|column_name, search_for| where("#{column_name} like ?", "%"+search_for+"%")}
   validates :screen_name, :uniqueness => true 
@@ -11,6 +11,11 @@ class Activist < ActiveRecord::Base
   end
   
   def self.set_politicians
+    # log our start time
+    # look for new mentions of each politician
+    # log our end time
+    # add all new activists to the activists table
+    # run it all again
     Resque.enqueue(StartTime)       
     Politician.all.each do |politician|
       Activist.get_activists(politician.screen_name)

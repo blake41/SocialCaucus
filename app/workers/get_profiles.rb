@@ -15,7 +15,6 @@ class GetProfiles
       end
     else  
       GetProfiles.save_profile(responseobj)
-      puts 'It worked!'
     end
   end
   
