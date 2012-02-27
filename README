@@ -28,3 +28,9 @@ then go to the resque-web interface and see the queues that have been created
 from the CL
 I usually run three workers working the three main queues, but if you did the optional tasks you'll want workers to work these queues also
 rake resque:work QUEUE=nameofqueue
+
+Look at the comments in the Tasks model to get an idea of what's going on here, but here's the gist.
+
+We have a list of politicians we're keeping tabs on.  We want to know who they follow (followers), who follows them (friends) and their tweets.
+We also want to know who's talking about them.  We use the twitter search api to find any mentions of their screen names and we call these folks activists.
+We then want to get the activist's profiles, and their follower and friends lists.
