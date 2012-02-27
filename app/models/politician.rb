@@ -2,6 +2,7 @@ class Politician < ActiveRecord::Base
   
   URL = "twitter-blake41.apigee.com/1/users/lookup.json"
   
+  # database is not seeded with user_ids, must run this first before anything else
   def self.get_user_id_from_screen_name
     self.find_in_batches(:batch_size => 100) do |array|
       screen_names = array.collect(&:screen_name).join(",")
