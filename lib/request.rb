@@ -1,7 +1,12 @@
 class Request
   
   def self.get(url, args)
-    Typhoeus::Request.get(url, :params => args)
+    # Typhoeus::Request.get(url, :params => args)
+    conn = Faraday.new(:url => "http://twitter-blake41.apigee.com") do |builder|
+    builder.use SocialCaucus::Response::ParseJson
+    builder.adapter :typhoeus
+    end
+    conn.get(url, args)
   end
   
   def self.search_error_check(responseobj, page, date)

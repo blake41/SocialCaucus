@@ -2,70 +2,62 @@ class GetPoliticiansTweets
   
   @queue = :Politicians_tweets
   
-  URL = "twitter-blake41.apigee.com/1/statuses/user_timeline.json"
+  URL = "/1/statuses/user_timeline.json"
 
-  def self.perform(user_id, start_page = 1)
-    @user = Politician.find(user_id)
-    @screen_name = @user.screen_name
-    start_page.upto(10000) do |page|
-      if self.base_run_done?
-        tweets = TweetsByPolitician.where(:screen_name => @screen_name).order("tweet_id DESC")
-        responseobj= self.get_newest_tweets(page, tweets)   
-      else
-        responseobj = self.get_first_tweets(page)                                 
-      end
-      if Request.error_check(responseobj, page, @screen_name)
-        puts "Error Code #{responseobj.code} on page #{page}"
-        Resque.enqueue(self, user_id, page)
-        break
-      else
-        response = JSON.parse(responseobj.body)
-        if response.count ==0
-          self.empty_results
-          break
-        else
-        self.save_results(response)
-        end
-      end
-    end
+  attr_accessor :screen_name
+  attr_accessor :user_id
+  attr_accessor :last_tweet_id
+  attr_accessor :politician
+
+  def initialize(user_id)
+    self.politician ||= Politician.find(user_id)
+    self.last_tweet_id ||= self.politician.last_tweet_id
+  end
+
+  def self.perform(user_id)
+    self.new(user_id).perform
   end
   
-  
-  def self.base_run_done?
-    if Politician.where(:screen_name => @screen_name)[0].base_run_done == 1
-      return true
+  def perform
+    # Crewait.start_waiting
+    # start_page.upto(10000) do |page|
+    #   # if self.base_run_done?(screen_name)
+    #     # tweets = TweetsByPolitician.where(:screen_name => screen_name).order("tweet_id DESC")
+    #   responseobj = self.get_tweets                               
+    #   if Request.error_check(responseobj, page, self.politician.screen_name)
+    #     puts "Error Code #{responseobj.code} on page #{page}"
+    #     Resque.enqueue(self, user_id)
+    #     break
+    #   else
+    #     response = JSON.parse(responseobj.body)
+    #     if response.count == 0
+    #       break
+    #     else
+    #       self.save_results(response)
+    #     end
+    #   end
+    # end
+  end
+
+  def get_tweets
+    Request.get(URL, options)
+  end
+
+  def options
+    if self.last_tweet_id.nil?
+      { :screen_name => self.politician.screen_name, :count => 200 }
     else
-      return false
+      { :screen_name => self.politician.screen_name, :count => 200, :since_id => self.last_tweet_id }
     end
-  end
-  
-  def self.empty_results
-    pol = Politician.where(:screen_name => @screen_name)
-    pol[0].update_attributes(:base_run_done => 1)
-    puts "Empty response"
-  end
-  
-  def self.get_newest_tweets(page, tweets)
-    highestid = tweets.first.tweet_id
-    Request.get(URL, { :screen_name => @screen_name, 
-                      :count => 200, 
-                      :page => page, 
-                      :since_id => highestid })
-  end
-  
-  def self.get_first_tweets(page)
-    Request.get(URL, { :screen_name => @screen_name, 
-                      :count => 200, 
-                      :page => page })
   end
 
   def self.save_results(response)
     response.each do |response|
-      TweetsByPolitician.create({:screen_name => @screen_name, 
-                                :text => response['text'], 
+      TweetsByPolitician.crewait({:text => response['text'], 
                                 :tweet_id => response['id'], 
                                 :timestamp => response['created_at'],
-                                :user_id => response['user']['id']} )
+                                :politician_id => self.politician.id} )
+                                
     end
     puts "Completed Successfully - Stored #{response.count} Results"
   end

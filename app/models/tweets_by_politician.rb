@@ -1,3 +1,5 @@
-class TweetsByPolitician< ActiveRecord::Base
+class TweetsByPolitician < ActiveRecord::Base
   
+	belongs_to :politician
+
 end

@@ -2,6 +2,8 @@ class Politician < ActiveRecord::Base
   
   URL = "twitter-blake41.apigee.com/1/users/lookup.json"
   
+  has_many :tweets, :class_name => "TweetsByPolitician"
+
   # database is not seeded with user_ids, must run this first before anything else
   def self.get_user_id_from_screen_name
     self.find_in_batches(:batch_size => 100) do |array|
@@ -37,4 +39,8 @@ class Politician < ActiveRecord::Base
     puts "#{counter} Jobs Queued Up"
   end
   
+  def last_tweet_id
+    self.tweets.last ? self.tweets.last.id : nil
+  end
+
 end

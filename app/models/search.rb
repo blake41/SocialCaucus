@@ -1,5 +1,5 @@
-class Search < ActiveRecord::Base
- 
+class Search
+	
   def self.query(args)
     scope = PoliticiansTweetsAbout.scoped
     scope = scope & select('*')

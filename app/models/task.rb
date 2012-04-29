@@ -1,4 +1,4 @@
-class Task < ActiveRecord::Base
+class Task
   
   # a follower is someone who follows me  
   # a friend is a person I follow.  The opposite of a follower

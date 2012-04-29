@@ -12,6 +12,8 @@ gem 'em-http-request'
 gem 'haml'
 gem 'crewait'#, :git => 'https://github.com/blake41/crewait'
 gem 'yajl-ruby', :require => 'yajl'
+gem 'faraday'
+
 
 # group :test do
   gem 'mocha'
