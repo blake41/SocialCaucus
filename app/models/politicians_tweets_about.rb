@@ -2,6 +2,10 @@ class PoliticiansTweetsAbout < ActiveRecord::Base
   
   validates :tweet_id, :uniqueness => true
 
+  def self.null
+    PoliticiansTweetsAbout.connection.select_all("SELECT screen_name from politicians_tweets_abouts where user_id is null")
+  end
+
   def self.location
     PoliticiansTweetsAbout.joins("join activists a on a.user_id=politicians_tweets_abouts.user_id")
   end
@@ -21,8 +25,8 @@ class PoliticiansTweetsAbout < ActiveRecord::Base
   def self.get_real_user_id
     # clean up user_ids
     # don't this this really works anymore either
-    PoliticiansTweetsAbout.where("user_id is null").find_in_batches(:batch_size => 100) do |array|
-      Resque.enqueue(TweetCorrect, array)
+    PoliticiansTweetsAbout.null.in_groups_of(100) do |chunk|
+      Resque.enqueue(TweetCorrect, chunk.join(","))
     end
   end
   

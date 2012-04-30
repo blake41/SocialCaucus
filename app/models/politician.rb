@@ -40,7 +40,11 @@ class Politician < ActiveRecord::Base
   end
   
   def last_tweet_id
-    self.tweets.last ? self.tweets.last.id : nil
+    self.tweets.present? ? self.tweets.sort_by(&:tweet_id).last.id : nil
+  end
+
+  def first_tweet_id
+    self.tweets.present? ? self.tweets.sort_by(&:tweet_id).first.id : nil
   end
 
 end
