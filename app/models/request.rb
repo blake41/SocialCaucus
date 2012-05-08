@@ -9,7 +9,17 @@ class Request
       req.url(url, args)
     end
   end
-  
+
+  def self.search(url, args)
+  conn = Faraday.new(:url => "http://search.twitter.com") do |builder|
+    builder.use ParseJson
+    builder.adapter :typhoeus
+  end
+  conn.get do |req|
+    req.url(url, args)
+  end
+end
+
   def self.search_error_check(responseobj, page, date)
     if Request.invalid_error_code?(responseobj, page, date)
       return true 

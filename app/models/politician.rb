@@ -6,10 +6,9 @@ class Politician < ActiveRecord::Base
 
   # database is not seeded with user_ids, must run this first before anything else
   def self.get_user_id_from_screen_name
-    self.find_in_batches(:batch_size => 100) do |array|
-      screen_names = array.collect(&:screen_name).join(",")
+    self.connection.select_values.("SELECT screen_name from politicians").find_in_batches(:batch_size => 100) do |array|
+      screen_names = array.join(",")
       responseobj = Request.get(URL,{:screen_name => screen_names})
-      response = JSON.parse(responseobj.body)
       response.each do |user|
         self.save_user(user)
       end
@@ -17,8 +16,8 @@ class Politician < ActiveRecord::Base
   end
   
   def self.save_user(user)
-    row = Politician.where(:screen_name => user['screen_name'])
-    row.first.update_attributes(:user_id => user['id'])
+    row = Politician.find_by_screen_name(:screen_name => user['screen_name'])
+    row.update_attributes(:user_id => user['id'])
   end
   
   def self.get_tweets_by_politicians

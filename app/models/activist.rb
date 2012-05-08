@@ -34,7 +34,7 @@ class Activist < ActiveRecord::Base
   end
   
   def self.new_activists
-    Activist.find_by_sql("SELECT DISTINCT p.screen_name FROM politicians_tweets_abouts p WHERE NOT EXISTS
+    self.find_by_sql("SELECT DISTINCT p.screen_name FROM politicians_tweets_abouts p WHERE NOT EXISTS
       (SELECT *
       FROM activists a 
       WHERE p.screen_name = a.screen_name)")
@@ -42,15 +42,15 @@ class Activist < ActiveRecord::Base
 
   def self.add_new_activists
     Crewait.start_waiting
-      Activist.new_activists.each do |activist|
-        Activist.crewait(:screen_name => activist.screen_name)
+      self.new_activists.each do |activist|
+        self.crewait(:screen_name => activist.screen_name)
       end
     Crewait.go!
     puts new_activists.count
   end
   
   def self.get_friends
-    new_activists = Activist.find_by_sql("SELECT a.screen_name, a.user_id 
+    new_activists = self.find_by_sql("SELECT a.screen_name, a.user_id 
                                           FROM activists a WHERE a.friends_count IS NULL 
                                           AND a.not_authorized IS NULL and  NOT exists
                                           (SELECT DISTINCT user_id 
@@ -63,7 +63,7 @@ class Activist < ActiveRecord::Base
   end
   
   def self.get_profiles
-    null_array = Activist.null
+    null_array = self.null
     null_array.in_groups_of(100) do |chunk|
       followers = chunk.join(",")
       Resque.enqueue(GetProfiles, followers)

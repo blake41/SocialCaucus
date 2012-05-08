@@ -2,7 +2,7 @@ class GetActivists
   
   @queue = :get_mentions
   
-  URL = 'http://twitter-blake41.apigee.com/search.json'
+  URL = '/search.json'
   
   def self.perform(date,query, x = 1)
     until_date = date.to_date
