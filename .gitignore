@@ -5,4 +5,4 @@ tmp/
 db/schema.rb
 Gemfile.lock
 config/database.yml
-app/.DS_Store
+*.DS_Store
