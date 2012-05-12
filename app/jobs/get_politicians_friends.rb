@@ -8,8 +8,6 @@ class GetPoliticiansFriends
     @user = Politician.find(user_id)
     responseobj = Request.get(URL, {:screen_name => @user.screen_name })
     if error = Request.error_check(responseobj, 0, @user)
-      debugger
-      puts 
       Resque.enqueue(GetFriends, user_id)
     else
       puts 'Saving'

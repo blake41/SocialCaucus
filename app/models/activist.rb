@@ -4,6 +4,8 @@ class Activist < ActiveRecord::Base
   scope :anon, lambda {|column_name, search_for| where("#{column_name} like ?", "%"+search_for+"%")}
   validates :screen_name, :uniqueness => true 
   
+  has_many :politicians_tweets_abouts
+
   def self.null
     self.connection.select_values("SELECT screen_name from activists where user_id IS NULL")
   end

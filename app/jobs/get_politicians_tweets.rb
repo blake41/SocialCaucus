@@ -10,10 +10,11 @@ class GetPoliticiansTweets < PoliticiansTweets
   end
 
   def options
+    hash = { :screen_name => self.politician.screen_name, :count => 200 }
     if self.last_tweet_id.nil?
-      { :screen_name => self.politician.screen_name, :count => 200 }
+      hash
     else
-      { :screen_name => self.politician.screen_name, :count => 200, :max_id => self.last_tweet_id }
+      hash.merge!(:max_id => self.last_tweet_id)
     end
   end
 

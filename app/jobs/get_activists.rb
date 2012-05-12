@@ -1,72 +1,40 @@
-class GetActivists
+class GetActivists < Job
   
   @queue = :get_mentions
   
-  URL = '/search.json'
+  attr_accessor :url, :query, :last_tweet_id
   
-  def self.perform(date,query, x = 1)
-    until_date = date.to_date
-    since_date = until_date-30.days
-    if GetActivists.base_run_done?(query)
-      highest_id = PoliticiansTweetsAbout.get_highest_id(query)
-    else
-      highest_id = ''
-    end
-    x.upto(15) do |page|
-      responseobj = ''
-      Activist.benchmark(message="salzburg - request") do
-        responseobj = Request.get(URL,{:q => query,
-                                        :rpp => 100, 
-                                        :page => page, 
-                                        :since => since_date.to_s,
-                                        :until => until_date.to_s,
-                                        :since_id => highest_id})
-      end
-      if Request.search_error_check(responseobj, page, date)
-        puts "Error Code #{responseobj.code} on page #{page}"
-        Resque.enqueue(GetActivists, date, query, page) 
-        break
-      else
-        response = ''
-        Activist.benchmark(message = 'salzburg - json') do
-          response = JSON.parse(responseobj.body)
-        end
-        if response['results'].count ==0
-          if highest_id.blank?
-            GetActivists.empty_results(query)
-            break
-          else  
-            puts 'Empty Results'
-            break
-          end
-        else
-          Activist.benchmark(message = "salzburg - database") do
-            GetActivists.store(response, query) 
-          end
-        end
-      end
-    end
+  def initialize(query)
+    self.query = query
+    self.url = '/search.json'
+    self.last_tweet_id = PoliticiansTweetsAbout.get_last_tweet_id(query)
   end
-  
-  def self.empty_results(politician)
-    pol = Politician.where(:screen_name => politician)
-    pol[0].update_attributes(:search_base_run => 1)
-    puts "Empty Results"
+
+  def self.perform(query)
+    self.new(query).perform
   end
-  
-  def self.base_run_done?(query)
-    if Politician.where(:screen_name => query)[0].search_base_run == 1
-      return true
+
+  def options
+    hash = {:q => self.query, :rpp => 100}
+    if self.last_tweet_id.nil?
+      hash
     else
-      return false
+      hash.merge!(:max_id => self.last_tweet_id)
     end
   end
 
-  def self.store(response, query)
+  def empty(response)
+    if response.body['results'].count == 0
+      true
+    else
+      false
+    end
+  end
+
+  def save_results(tweets)
     Crewait.start_waiting
-      response['results'].each do |tweet|
-        PoliticiansTweetsAbout.crewait(:user_id => tweet['from_user_id'], 
-                        :screen_name => tweet['from_user'], 
+      tweets['results'].each do |tweet|
+        PoliticiansTweetsAbout.crewait(:activist_id => tweet['from_user_id'], 
                         :text => tweet['text'],
                         :tweet_id => tweet['id'],
                         :to_user_id => tweet['to_user_id'],
@@ -74,7 +42,11 @@ class GetActivists
                         :keyword => query)
       end
     Crewait.go!
-    puts "Attempted to insert #{response['results'].count} results"
+    self.last_tweet_id = tweets['results'].last['id']
+    puts "largest record is #{tweets['results'].first['id']}"
+    puts "smallest recrod is #{tweets['results'].last['id']}"
+    puts "Attempted to insert #{tweets['results'].count} results"
+    puts self.last_tweet_id
   end
 end
 

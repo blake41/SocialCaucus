@@ -1,6 +1,6 @@
 class Job
 
-	include SocialCaucus::ResponseMethods
+	include ResponseMethods
   attr_accessor :screen_name
   attr_accessor :user_id
   attr_accessor :politician

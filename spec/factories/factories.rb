@@ -7,7 +7,6 @@ end
 
 FactoryGirl.define do
   factory :politicians_tweets do
-    debugger
     timestamp '05/10/2011'
   end
 end

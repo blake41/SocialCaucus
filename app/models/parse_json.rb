@@ -1,6 +1,5 @@
 class ParseJson < Faraday::Response::Middleware
   # def on_complete(env)
-  # 	debugger
   #   # do something with the response
   #   env[:body] = JSON.parse(env[:body])
   # end
