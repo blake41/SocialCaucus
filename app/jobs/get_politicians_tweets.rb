@@ -18,6 +18,9 @@ class GetPoliticiansTweets < PoliticiansTweets
     end
   end
 
+  def enqueue_myself
+    Resque.enqueue(self.class, self.politician.id)
+  end
 
   def save_results(tweets)
     tweets.each do |tweet|

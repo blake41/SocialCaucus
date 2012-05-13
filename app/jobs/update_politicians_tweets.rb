@@ -13,6 +13,10 @@ class UpdatePoliticiansTweets < PoliticiansTweets
     { :screen_name => self.politician.screen_name, :count => 200, :since_id => self.first_tweet_id }
   end
 
+  def enqueue_myself
+    Resque.enqueue(self.class, self.politician.id)
+  end
+
   def save_results(tweets)
     tweets.each do |tweet|
       TweetsByPolitician.crewait({:text => tweet['text'], 

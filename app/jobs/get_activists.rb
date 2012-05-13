@@ -31,6 +31,10 @@ class GetActivists < Job
     end
   end
 
+  def enqueue_myself
+    Resque.enqueue(self.class, self.query)
+  end
+
   def save_results(tweets)
     Crewait.start_waiting
       tweets['results'].each do |tweet|
@@ -42,7 +46,7 @@ class GetActivists < Job
                         :keyword => query)
       end
     Crewait.go!
-    self.last_tweet_id = tweets['results'].last['id']
+    self.last_tweet_id = tweets['results'].last['id'] - 1
     puts "largest record is #{tweets['results'].first['id']}"
     puts "smallest recrod is #{tweets['results'].last['id']}"
     puts "Attempted to insert #{tweets['results'].count} results"

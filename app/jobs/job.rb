@@ -12,9 +12,10 @@ class Job
         case
         when server_error(response)
           puts "Error Code #{response.status}"
-          Resque.enqueue(self.class, user_id)
+          self.enqueue_myself
           break
         when unauthorized(response)
+          debugger
           puts "User protected tweets"
           self.politician.destroy
           break

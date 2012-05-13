@@ -4,7 +4,7 @@ class Activist < ActiveRecord::Base
   scope :anon, lambda {|column_name, search_for| where("#{column_name} like ?", "%"+search_for+"%")}
   validates :screen_name, :uniqueness => true 
   
-  has_many :politicians_tweets_abouts
+  has_many :activists_friends
 
   def self.null
     self.connection.select_values("SELECT screen_name from activists where user_id IS NULL")
@@ -24,46 +24,48 @@ class Activist < ActiveRecord::Base
     # run it all again
     Resque.enqueue(StartTime)       
     Politician.all.each do |politician|
-      self.get_activists(politician.screen_name)
+      Resque.enqueue(GetActivists, politician.screen_name)
     end
     Resque.enqueue(EndTime)
     Resque.enqueue(NewTasks)
   end
   
-  def self.get_activists(politician)
-    today = Date.today
-    Resque.enqueue(GetActivists, today, politician)
-  end
-  
   def self.new_activists
-    self.find_by_sql("SELECT DISTINCT p.screen_name FROM politicians_tweets_abouts p WHERE NOT EXISTS
+    self.connection.select_values("SELECT DISTINCT p.activist_id FROM politicians_tweets_abouts p WHERE NOT EXISTS
       (SELECT *
       FROM activists a 
-      WHERE p.screen_name = a.screen_name)")
+      WHERE p.activist_id = a.user_id)")
   end
 
   def self.add_new_activists
     Crewait.start_waiting
-      self.new_activists.each do |activist|
-        self.crewait(:screen_name => activist.screen_name)
+      self.new_activists.each do |activist_id|
+        self.crewait(:user_id => activist_id)
       end
     Crewait.go!
     puts new_activists.count
   end
   
   def self.get_friends
-    new_activists = self.find_by_sql("SELECT a.screen_name, a.user_id 
-                                          FROM activists a WHERE a.friends_count IS NULL 
-                                          AND a.not_authorized IS NULL and  NOT exists
+    new_activists = self.find_by_sql("SELECT a.user_id 
+                                          FROM activists a 
+                                          WHERE a.friends_count IS NULL 
+                                          AND NOT exists
                                           (SELECT DISTINCT user_id 
                                           FROM activist_friends af 
-                                          WHERE af.user_id = a.user_id)")
+                                          WHERE af.activist_id = a.user_id)")
     new_activists.each do |activist|
-      Resque.enqueue(GetFriends, activist.screen_name, activist.user_id)
+      Resque.enqueue(GetFriends, activist.user_id)
     end
     Resque.enqueue(GetFriendsStart)
   end
   
+  def tweets
+    self.find_by_sql("SELECT * from politicians_tweets_abouts p where p.activist_id = activists.user_id")
+  end
+
+# left off here
+
   def self.get_profiles
     null_array = self.null
     null_array.in_groups_of(100) do |chunk|
