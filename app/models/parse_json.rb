@@ -5,9 +5,8 @@ class ParseJson < Faraday::Response::Middleware
   # end
 	def call(env)
 	  # do something with the request
-
 	  @app.call(env).on_complete do
-	  	env[:body] = JSON.parse(env[:body])
+	  	env[:body] = JSON.parse(env[:body]) if env[:status] == 200
 	    # do something with the response
 	  end
 	end

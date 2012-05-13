@@ -12,7 +12,7 @@ class Job
         case
         when server_error(response)
           puts "Error Code #{response.status}"
-          Resque.enqueue(self, user_id)
+          Resque.enqueue(self.class, user_id)
           break
         when unauthorized(response)
           puts "User protected tweets"
