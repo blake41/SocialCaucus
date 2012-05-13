@@ -14,6 +14,11 @@ class Job
           puts "Error Code #{response.status}"
           self.enqueue_myself
           break
+        when rate_limited(response)
+          # rate limit somehow
+          sleep 60
+          self.enqueue_myself
+        end
         when unauthorized(response)
           debugger
           puts "User protected tweets"
@@ -29,6 +34,14 @@ class Job
     Crewait.go!
   end
   
+  def rate_limited(response)
+    if response.status == 420
+      true
+    else
+      false
+    end
+  end
+
   def empty(response)
     if response.body.count == 0
       true
