@@ -1,0 +1,3 @@
+class GetActivistsFriends < GetActivistsFriends
+
+end

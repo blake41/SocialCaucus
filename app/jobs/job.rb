@@ -1,9 +1,7 @@
 class Job
 
 	include ResponseMethods
-  attr_accessor :screen_name
-  attr_accessor :user_id
-  attr_accessor :politician
+  attr_accessor :screen_name, :user_id, :rate_limited, :politician
 
 	def perform
     Crewait.start_waiting
@@ -15,10 +13,9 @@ class Job
           self.enqueue_myself
           break
         when rate_limited(response)
-          # rate limit somehow
-          sleep 60
-          self.enqueue_myself
-        end
+          self.rate_limit << 1 
+          sleep_for = 5 ** self.rate_limit.count
+          sleep sleep_for
         when unauthorized(response)
           debugger
           puts "User protected tweets"

@@ -3,12 +3,9 @@ class GetFriends < Job
   @queue = :get_friends
   
   URL = "/1/friends/ids.json"
-  # URL2 = "Twitstream-uhjish.apigee.com/1/friends/ids.json"
-  
-  attr_accessor :activist
 
-  def initialize(user_id)
-    self.activist = Activist.find_by_user_id(user_id)
+  def initialize(user_id, class_name)
+    @class_instance.class.name = class_name.find_by_user_id(user_id)
   end
 
   def self.perform(user_id)
@@ -24,7 +21,7 @@ class GetFriends < Job
       break
     when unauthorized(response)
       puts "Deleting user due to private account"
-      self.activist.destroy
+      @class_instance.class.name.destroy
       break
     else
       self.save_results(response.body)
@@ -32,23 +29,23 @@ class GetFriends < Job
   end
   
   def options
-    {:user_id => self.activist.user_id }
+    {:user_id => @class_instance.class.name.user_id }
   end
   
   def enqueue_myself
-    Resque.enqueue(self.class, self.activist.user_id)
+    Resque.enqueue(self.class, @class_instance.class.name.user_id)
   end
 
-  def self.save_results(response)
+  def save_results(response)
     ids = response.body['ids']
     Crewait.start_waiting
       ids.each do |friend|
         # this should probably be just the id of the activist so we can do a has many friends
-        ActivistFriend.crewait(:activist_id => self.activist.user_id, 
+        ActivistFriend.crewait("#{@class_instance.class.name.downcase}_id".to_sym => @class_instance.id, 
                               :friend_id => friend)
       end
     Crewait.go!
-    self.activist.update_all(:friends_count => ids.count)
+    @class_name.update_all(:friends_count => ids.count)
     puts "#{ids.count} Friends Saved"
   end
 end
