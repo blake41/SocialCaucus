@@ -1,5 +1,7 @@
 class GetFriends < Job
   
+ # Call peform on the class, give it a user_id and the class name
+  
   @queue = :get_friends
   
   URL = "/1/friends/ids.json"
@@ -46,7 +48,7 @@ class GetFriends < Job
     ids = response['ids']
     Crewait.start_waiting
       ids.each do |friend|
-        Kernel.const_get(@class_instance.class.name).crewait("#{@class_instance.class.name.downcase}_id".to_sym => @class_instance.id, 
+        Kernel.const_get("#{@class_instance.class.name}sFriend").crewait("#{@class_instance.class.name.downcase}_id".to_sym => @class_instance.id, 
                               :friend_id => friend)
       end
     Crewait.go!
