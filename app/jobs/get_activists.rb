@@ -6,6 +6,7 @@ class GetActivists < Job
   
   def initialize(query)
     self.query = query
+    self.rate_limit = []
     self.url = '/search.json'
     self.last_tweet_id = PoliticiansTweetsAbout.get_last_tweet_id(query)
   end

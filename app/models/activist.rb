@@ -38,12 +38,13 @@ class Activist < ActiveRecord::Base
   end
 
   def self.add_new_activists
+    temp_new_activists = self.new_activists
     Crewait.start_waiting
-      self.new_activists.each do |activist_id|
+      temp_new_activists.each do |activist_id|
         self.crewait(:user_id => activist_id)
       end
     Crewait.go!
-    puts new_activists.count
+    puts "#{temp_new_activists.count} activists added"
   end
   
   def self.get_friends
@@ -52,16 +53,16 @@ class Activist < ActiveRecord::Base
                                           WHERE a.friends_count IS NULL 
                                           AND NOT exists
                                           (SELECT DISTINCT user_id 
-                                          FROM activist_friends af 
+                                          FROM activists_friends af 
                                           WHERE af.activist_id = a.user_id)")
     new_activists.each do |activist|
-      Resque.enqueue(GetFriends, activist.user_id)
+      Resque.enqueue(GetFriends, activist.user_id, self.class)
     end
-    Resque.enqueue(GetFriendsStart)
+    # Resque.enqueue(GetFriendsStart)
   end
   
   def tweets
-    self.find_by_sql("SELECT * from politicians_tweets_abouts p where p.activist_id = activists.user_id")
+    self.find_by_sql("SELECT * from politicians_tweets_abouts p where p.activist_id = #{self.user_id}")
   end
 
 # left off here

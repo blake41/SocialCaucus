@@ -1,19 +1,19 @@
 class Job
 
 	include ResponseMethods
-  attr_accessor :screen_name, :user_id, :rate_limited, :politician
+  attr_accessor :screen_name, :user_id, :rate_limit, :politician
 
 	def perform
     Crewait.start_waiting
       1.upto(10000) do
-        response = self.get_tweets
+        response = Request.get(self.url, options)
         case
         when server_error(response)
           puts "Error Code #{response.status}"
           self.enqueue_myself
           break
         when rate_limited(response)
-          self.rate_limit << 1 
+          self.rate_limit << 1
           sleep_for = 5 ** self.rate_limit.count
           sleep sleep_for
         when unauthorized(response)
@@ -30,9 +30,9 @@ class Job
       end
     Crewait.go!
   end
-  
+
   def rate_limited(response)
-    if response.status == 420
+    if response.status == 420 || response.status == 400
       true
     else
       false
@@ -54,9 +54,4 @@ class Job
       false  
     end
   end
-
-  def get_tweets
-    Request.get(self.url, options)
-  end
-
 end

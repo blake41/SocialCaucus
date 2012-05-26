@@ -1,27 +1,19 @@
-class GetFollower
+class GetFollowers < GetFriends
   
-  @queue = :Monitor_mentions
-  
-  URL = "twitter-blake41.apigee.com/1/users/lookup.json"
+  @queue = :get_followers
 
-  def self.perform(array)
-    followers = Helpers.prepare_array(array)
-    responseobj = Request.get(URL, {:user_id => followers })
-    if Request.error_check(responseobj)
-      Resque.enqueue(GetFollower, array)
-    else
-      GetFollower.store(responseobj)
-    end
-  end
+  URL = "/1/followers/ids.json"
   
-  def self.store(responseobj)
-    response = JSON.parse(responseobj.body)
-    response.each do |user|
-      follower = GillibrandFollower.where(:user_id => user['id'])
-      follower[0].update_attributes(:follower_count => user['followers_count'], 
-                                    :screen_name => user['screen_name'], 
-                                    :description => user['description'], 
-                                    :location => user['location'])
-    end
+  def save_results(response)
+    ids = response['ids']
+    Crewait.start_waiting
+      ids.each do |friend|
+        Kernel.const_get(@class_instance.class.name).crewait("#{@class_instance.class.name.downcase}_id".to_sym => @class_instance.id, 
+                              :follower_id => friend)
+      end
+    Crewait.go!
+    @class_instance.update_attributes(:followers_count => ids.count) if @class_instance == "Activist"
+    puts "#{ids.count} Followers Saved"
   end
+
 end

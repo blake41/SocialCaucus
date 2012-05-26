@@ -40,7 +40,7 @@ class Task
 
   def self.update_friends_count
     # cache how many friends an activist has
-    activists = Activist.find_by_sql("SELECT user_id, count(id) as friends_count FROM activist_friends GROUP BY user_id")
+    activists = Activist.find_by_sql("SELECT user_id, count(id) as friends_count FROM activists_friends GROUP BY user_id")
     activists.each do |activist|
       Activist.where(:user_id=>activist.user_id).update_all(:friends_count => activist.friends_count)
     end

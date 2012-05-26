@@ -1,7 +1,7 @@
 class CreatePoliticiansFollowers < ActiveRecord::Migration
   def self.up
     create_table :politicians_followers do |t|
-      t.integer :user_id
+      t.integer :politician_id
       t.integer :follower_id
 
       t.timestamps
