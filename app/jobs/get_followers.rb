@@ -1,11 +1,14 @@
-class GetFollowers < GetFriends
+class GetFollowers < GetRelations
   
   # Call peform on the class, give it a user_id and the class name
 
   @queue = :get_followers
 
-  URL = "/1/followers/ids.json"
-  
+  def initialize(user_id, class_name)
+    super
+    self.url = "/1/followers/ids.json"
+  end
+
   def save_results(response)
     ids = response['ids']
     Crewait.start_waiting

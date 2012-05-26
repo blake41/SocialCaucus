@@ -1,5 +1,7 @@
-class GetActivists < Job
+class GetActivists < InfiniteJob
   
+  # Call perform on the class and pass in a query
+
   @queue = :get_mentions
   
   attr_accessor :url, :query, :last_tweet_id
@@ -48,8 +50,6 @@ class GetActivists < Job
       end
     Crewait.go!
     self.last_tweet_id = tweets['results'].last['id'] - 1
-    puts "largest record is #{tweets['results'].first['id']}"
-    puts "smallest recrod is #{tweets['results'].last['id']}"
     puts "Attempted to insert #{tweets['results'].count} results"
     puts self.last_tweet_id
   end

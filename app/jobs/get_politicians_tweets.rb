@@ -1,5 +1,7 @@
 class GetPoliticiansTweets < PoliticiansTweets
 
+  # Call perform on the class and pass in the id
+
   @queue = :get_politicians_tweets
 
   attr_accessor :last_tweet_id
@@ -10,7 +12,7 @@ class GetPoliticiansTweets < PoliticiansTweets
   end
 
   def options
-    hash = { :screen_name => self.politician.screen_name, :count => 200 }
+    hash = { :user_id => self.politician.user_id, :count => 200 }
     if self.last_tweet_id.nil?
       hash
     else

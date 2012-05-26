@@ -10,7 +10,7 @@ class UpdatePoliticiansTweets < PoliticiansTweets
 	end
 
   def options
-    { :screen_name => self.politician.screen_name, :count => 200, :since_id => self.first_tweet_id }
+    { :user_id => self.politician.user_id, :count => 200, :since_id => self.first_tweet_id }
   end
 
   def enqueue_myself
