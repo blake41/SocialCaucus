@@ -4,10 +4,34 @@ class Politician < ActiveRecord::Base
   
   has_many :tweets, :class_name => "TweetsByPolitician"
   
+  def self.get_screen_names
+    self.connection.select_values("SELECT screen_name from politicians")
+  end
+
+  def self.without_followers
+    self.find_by_sql("SELECT a.user_id 
+                                          FROM politicians p 
+                                          WHERE p.followers_count IS NULL 
+                                          AND NOT exists
+                                          (SELECT DISTINCT user_id 
+                                          FROM politicians_followers pf 
+                                          WHERE pf.politician_id = p.user_id)")
+  end
+
+  def self.without_friends
+    self.find_by_sql("SELECT a.user_id 
+                                          FROM politicians p
+                                          WHERE p.friends_count IS NULL 
+                                          AND NOT exists
+                                          (SELECT DISTINCT user_id 
+                                          FROM politicians_friends pf 
+                                          WHERE pf.politician_id = p.user_id)")
+  end
+
   # database is not seeded with user_ids, must run this first before anything else
   def self.get_user_id_from_screen_name
-    self.connection.select_values.("SELECT screen_name from politicians").find_in_batches(:batch_size => 100) do |array|
-      screen_names = array.join(",")
+    self.get_screen_names.in_groups_of(100) do |chunk|
+      screen_names = chunk.join(",")
       Resque.enqueue(GetScreenNamesFromUserIds, screen_names)
     end
   end
@@ -22,28 +46,16 @@ class Politician < ActiveRecord::Base
   end
 
   def self.get_new_politicians_friends
-    new_politicians = self.find_by_sql("SELECT a.user_id 
-                                          FROM politicians p
-                                          WHERE p.friends_count IS NULL 
-                                          AND NOT exists
-                                          (SELECT DISTINCT user_id 
-                                          FROM politicians_friends pf 
-                                          WHERE pf.politician_id = p.user_id)")
+    new_politicians = self.without_friends
     new_politicians.each do |politician|
-      Resque.enqueue(GetFriends, politician.user_id, self.class)
+      Resque.enqueue(GetFriends, politician.user_id, self.name)
     end   
   end
   
   def self.get_new_politicians_followers
-    new_politicians = self.find_by_sql("SELECT a.user_id 
-                                          FROM politicians p 
-                                          WHERE p.followers_count IS NULL 
-                                          AND NOT exists
-                                          (SELECT DISTINCT user_id 
-                                          FROM politicians_followers pf 
-                                          WHERE pf.politician_id = p.user_id)")
+    new_politicians = self.without_followers
     new_politicians.each do |politician|
-      Resque.enqueue(GetFollowers, politician.user_id, self.class)
+      Resque.enqueue(GetFollowers, politician.user_id, self.name)
     end   
   end
 

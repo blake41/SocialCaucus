@@ -1,7 +1,7 @@
 class GetRelations < FiniteJob
 
 	def initialize(user_id, class_name)
-    @class_instance = class_name.find_by_user_id(user_id)
+    @class_instance = Kernel.get_const(class_name).find_by_user_id(user_id)
     self.rate_limit = []
   end
 
