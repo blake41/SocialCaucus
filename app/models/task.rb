@@ -8,15 +8,19 @@ class Task
     Activist.get_profiles
   end
   
-  def self.get_mentions
-    #  ask twitter search api for all mentions of a politicans screen name
-    # add a row to politicianstweetsabout for each tweet
-    Activist.set_politicians
+  def self.get_activists
+    Politician.all.each do |politician|
+      Resque.enqueue(GetActivists, politician.screen_name)
+    end
   end
   
-  def self.get_friends
+  def self.get_activists_friends
     # get all the "friends" of the activist.  
     Activist.get_friends
+  end
+
+  def self.get_activists_followers
+    Activist.get_followers
   end
   
   def self.add_new_activists
@@ -24,26 +28,16 @@ class Task
     Activist.add_new_activists
   end
 
-  def self.start_cycle
-    self.get_mentions
-    # get mentions does the following:
-    # log our start time
-    # look for new mentions of each politician
-    # log our end time
-    # add all new activists to the activists table
-    # run it all again    
-    self.get_friends
-    # get the friends of all new activists
-    self.get_profiles
-    # get profile/demographic info for each new activist
+  def self.get_politicians_tweets
+    Politician.get_tweets_by_politicians
   end
 
-  def self.update_friends_count
-    # cache how many friends an activist has
-    activists = Activist.find_by_sql("SELECT user_id, count(id) as friends_count FROM activists_friends GROUP BY user_id")
-    activists.each do |activist|
-      Activist.where(:user_id=>activist.user_id).update_all(:friends_count => activist.friends_count)
-    end
+  def self.get_new_politicians_followers
+    Politician.get_new_politicians_followers
+  end
+
+  def self.get_new_politicians_friends
+    Politician.get_new_politicians_friends
   end
 
 end
