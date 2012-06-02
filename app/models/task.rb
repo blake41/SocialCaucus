@@ -16,11 +16,11 @@ class Task
   
   def self.get_activists_friends
     # get all the "friends" of the activist.  
-    Activist.get_friends
+    Activist.get_new_friends
   end
 
   def self.get_activists_followers
-    Activist.get_followers
+    Activist.get_new_followers
   end
   
   def self.add_new_activists
@@ -33,11 +33,11 @@ class Task
   end
 
   def self.get_new_politicians_followers
-    Politician.get_new_politicians_followers
+    Politician.get_new_followers
   end
 
   def self.get_new_politicians_friends
-    Politician.get_new_politicians_friends
+    Politician.get_new_friends
   end
 
 end

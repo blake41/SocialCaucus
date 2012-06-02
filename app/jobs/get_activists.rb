@@ -2,7 +2,7 @@ class GetActivists < InfiniteJob
   
   # Call perform on the class and pass in a query
 
-  @queue = :get_mentions
+  @queue = :get_activists
   
   attr_accessor :url, :query, :last_tweet_id
   

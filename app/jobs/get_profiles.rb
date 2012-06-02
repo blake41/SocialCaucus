@@ -2,22 +2,22 @@ class GetProfiles < FiniteJob
   
   @queue = :get_profiles
 
-  def initialize(user_ids)
-    @user_ids = user_ids
+  def initialize(screen_names)
+    @screen_names = screen_names
     self.rate_limit = []
     self.url = '/1/users/lookup.json'
   end
 
-  def self.perform(user_ids)
-    self.new(user_ids).perform
+  def self.perform(screen_names)
+    self.new(screen_names).perform
   end
 
   def options
-    {:user_id =>  @user_ids}
+    {:screen_names =>  @screen_names}
   end
 
   def enqueue_myself
-    Resque.enqueue(self.class, @user_ids)
+    Resque.enqueue(self.class, @screen_names)
   end
 
   def remove_unauthorized
@@ -26,7 +26,6 @@ class GetProfiles < FiniteJob
 
   def save_results(response)
     response.each do |user|
-      debugger
       Activist.update_all({:screen_name => user['screen_name'], 
                           :description => user['description'], 
                           :location => user['location']}, "user_id = #{user['id']}")

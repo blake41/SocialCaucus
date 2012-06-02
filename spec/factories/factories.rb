@@ -11,3 +11,14 @@ FactoryGirl.define do
   end
 end
 
+FactoryGirl.define do
+	factory :activist do
+		user_id '12345678'
+	end
+end
+
+FactoryGirl.define do
+  factory :politicians_tweets_about do
+  	activist_id '12345678'
+  end
+end
