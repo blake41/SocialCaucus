@@ -4,8 +4,10 @@ describe Activist do
 	context "#add_new_activists" do
 		it "should retrieve all the new activists" do
 			Activist.stubs(:new_activists => [1,2,3])
-			Activist.expects(:crewait).with(:user_id => 1).then.with(:user_id => 2).then.with(:user_id => 3)
-			Activist.new_activists
+			Activist.expects(:crewait).with(:user_id => 1)
+			Activist.expects(:crewait).with(:user_id => 2)
+			Activist.expects(:crewait).with(:user_id => 3)
+			Activist.add_new_activists
 		end
 	end
 

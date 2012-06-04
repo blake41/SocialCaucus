@@ -20,6 +20,10 @@ class GetPoliticiansTweets < PoliticiansTweets
     end
   end
 
+  def remove_unauthorized
+    self.politician.destroy
+  end
+
   def enqueue_myself
     Resque.enqueue(self.class, self.politician.id)
   end

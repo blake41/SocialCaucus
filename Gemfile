@@ -26,6 +26,7 @@ gem 'faraday'
   # gem 'webmock'
   gem 'hash_dealer'
   gem 'colorize'
+  gem 'spork'
 # end
 
 # group :development do

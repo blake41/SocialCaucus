@@ -13,8 +13,7 @@ class PoliticiansTweetsAbout < ActiveRecord::Base
   end
 
   def self.get_last_tweet_id(query)
-    last_tweet_id = PoliticiansTweetsAbout.where(:keyword => query).minimum(:tweet_id)
-    last_tweet_id.nil? ? "" : last_tweet_id
+    PoliticiansTweetsAbout.where(:keyword => query).minimum(:tweet_id)
   end
 
 end

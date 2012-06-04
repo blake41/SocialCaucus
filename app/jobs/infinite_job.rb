@@ -12,11 +12,10 @@ class InfiniteJob < Job
         when rate_limited(response)
           self.rate_limit << 1
           sleep_for = 5 ** self.rate_limit.count
-          sleep sleep_for
+          Kernel.sleep sleep_for
         when unauthorized(response)
-          debugger
           puts "User protected tweets"
-          self.politician.destroy
+          self.remove_unauthorized
           break
         when empty(response)
           puts "Empty response"

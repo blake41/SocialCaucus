@@ -19,19 +19,15 @@ class GetActivists < InfiniteJob
 
   def options
     hash = {:q => self.query, :rpp => 100}
-    if self.last_tweet_id.nil?
-      hash
-    else
-      hash.merge!(:max_id => self.last_tweet_id)
-    end
+    self.last_tweet_id.nil? ? hash : hash.merge!(:max_id => self.last_tweet_id)
+  end
+
+  def remove_unauthorized
+    true
   end
 
   def empty(response)
-    if response.body['results'].count == 0
-      true
-    else
-      false
-    end
+    response.body['results'].count == 0 ? true : false
   end
 
   def enqueue_myself
@@ -46,12 +42,11 @@ class GetActivists < InfiniteJob
                         :tweet_id => tweet['id'],
                         :to_user_id => tweet['to_user_id'],
                         :timestamp => Date.parse(tweet['created_at']),
-                        :keyword => query)
+                        :keyword => self.query)
       end
     Crewait.go!
     self.last_tweet_id = tweets['results'].last['id'] - 1
     puts "Attempted to insert #{tweets['results'].count} results"
-    puts self.last_tweet_id
   end
 end
 
