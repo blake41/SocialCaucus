@@ -13,31 +13,11 @@ class GetPoliticiansTweets < PoliticiansTweets
 
   def options
     hash = { :user_id => self.politician.user_id, :count => 200 }
-    if self.last_tweet_id.nil?
-      hash
-    else
-      hash.merge!(:max_id => self.last_tweet_id)
-    end
+    self.last_tweet_id.nil? ? hash : hash.merge!(:max_id => self.last_tweet_id)
   end
 
-  def remove_unauthorized
-    self.politician.destroy
-  end
-
-  def enqueue_myself
-    Resque.enqueue(self.class, self.politician.id)
-  end
-
-  def save_results(tweets)
-    tweets.each do |tweet|
-      TweetsByPolitician.crewait({:text => tweet['text'], 
-                                :tweet_id => tweet['id'], 
-                                :timestamp => tweet['created_at'],
-                                :politician_id => self.politician.id} )
-                                
-    end
-    puts "Completed Successfully - Stored #{tweets.count} Results"
-    self.last_tweet_id = tweets.last['id'] - 1
+  def id_to_save(tweets)
+    tweets.last['id'] - 1
   end
 
 end

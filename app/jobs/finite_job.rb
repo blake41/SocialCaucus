@@ -4,7 +4,6 @@ class FiniteJob < Job
     response = Request.get(self.url, self.options)
     case
     when rate_limited(response)
-      debugger
       self.rate_limit << 1 
       sleep_for = 5 ** self.rate_limit.count
       puts "sleeping for #{sleep_for} seconds"

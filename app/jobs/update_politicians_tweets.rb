@@ -1,5 +1,7 @@
 class UpdatePoliticiansTweets < PoliticiansTweets
 
+  # Call perform on this class and pass in the user_id
+
 	@queue = :update_politicians_tweets
 
 	attr_accessor :first_tweet_id
@@ -13,20 +15,8 @@ class UpdatePoliticiansTweets < PoliticiansTweets
     { :user_id => self.politician.user_id, :count => 200, :since_id => self.first_tweet_id }
   end
 
-  def enqueue_myself
-    Resque.enqueue(self.class, self.politician.id)
-  end
-
-  def save_results(tweets)
-    tweets.each do |tweet|
-      TweetsByPolitician.crewait({:text => tweet['text'], 
-                                :tweet_id => tweet['id'], 
-                                :timestamp => tweet['created_at'],
-                                :politician_id => self.politician.id} )
-                                
-    end
-    puts "Completed Successfully - Stored #{tweets.count} Results"
-    self.last_tweet_id = tweets.last['id']
+  def id_to_save(tweets)
+    tweets.last["id"]
   end
 
 end
