@@ -19,7 +19,7 @@ describe Activist do
 		it "should return all activists whose user ids are null" do
 			activist = Activist.create(:screen_name => "heyma")
 			activist2 = FactoryGirl.create(:activist)
-			Activist.null.should == [activist.screen_name]
+			Activist.null.should == [activist2.user_id]
 		end
 	end
 

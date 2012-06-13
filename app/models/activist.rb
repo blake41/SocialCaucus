@@ -10,7 +10,7 @@ class Activist < ActiveRecord::Base
   has_many :tweets, :primary_key => :user_id, :class_name => "PoliticiansTweetsAbout"
 
   def self.null
-    self.connection.select_values("SELECT screen_name from activists where user_id IS NULL")
+    self.connection.select_values("SELECT user_id from activists where screen_name IS NULL")
   end
 
   def self.search(q)
